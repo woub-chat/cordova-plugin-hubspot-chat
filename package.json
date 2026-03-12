@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/woub-chat/cordova-plugin-hubspot-chat.git"
+    "url": "https://github.com/romanlazurenko/cordova-plugin-hubspot-chat.git"
   },
   "keywords": [
     "ecosystem:cordova",

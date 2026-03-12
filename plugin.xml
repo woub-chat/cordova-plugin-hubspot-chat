@@ -14,8 +14,9 @@
     </js-module>
 
     <preference name="HUBSPOT_PORTAL_ID" />
+    <preference name="HUBSPOT_HUBLET" default="eu1" />
     <preference name="HUBSPOT_HUB_ID" />
-    <preference name="HUBSPOT_DEFAULT_CHAT_FLOW" default="support" />
+    <preference name="HUBSPOT_DEFAULT_CHAT_FLOW" default="default" />
 
     <!-- iOS -->
     <platform name="ios">
@@ -26,20 +27,6 @@
         </config-file>
 
         <source-file src="src/ios/HubspotChatPlugin.swift" />
-
-        <!-- HubSpot-Info.plist configuration -->
-        <config-file target="*-Info.plist" parent="HubSpotPortalId">
-            <string>$HUBSPOT_PORTAL_ID</string>
-        </config-file>
-        <config-file target="*-Info.plist" parent="HubSpotHubId">
-            <string>$HUBSPOT_HUB_ID</string>
-        </config-file>
-        <config-file target="*-Info.plist" parent="HubSpotEnvironment">
-            <string>prod</string>
-        </config-file>
-        <config-file target="*-Info.plist" parent="HubSpotDefaultChatFlow">
-            <string>$HUBSPOT_DEFAULT_CHAT_FLOW</string>
-        </config-file>
 
         <!-- Hook to add Swift Package Manager dependency -->
         <hook type="after_plugin_install" src="hooks/ios/add_spm_dependency.js" />

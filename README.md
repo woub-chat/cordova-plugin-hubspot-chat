@@ -7,10 +7,10 @@ Cordova plugin for HubSpot Mobile Chat SDK (iOS & Android).
 From GitHub:
 
 ```bash
-cordova plugin add https://github.com/woub-chat/cordova-plugin-hubspot-chat.git \
+cordova plugin add https://github.com/romanlazurenko/cordova-plugin-hubspot-chat.git \
   --variable HUBSPOT_PORTAL_ID=YOUR_PORTAL_ID \
-  --variable HUBSPOT_HUB_ID=YOUR_HUB_ID \
-  --variable HUBSPOT_DEFAULT_CHAT_FLOW=support
+  --variable HUBSPOT_HUBLET=eu1 \
+  --variable HUBSPOT_DEFAULT_CHAT_FLOW=default
 ```
 
 From local path:
@@ -18,47 +18,63 @@ From local path:
 ```bash
 cordova plugin add /path/to/cordova-plugin-hubspot-chat \
   --variable HUBSPOT_PORTAL_ID=YOUR_PORTAL_ID \
-  --variable HUBSPOT_HUB_ID=YOUR_HUB_ID \
-  --variable HUBSPOT_DEFAULT_CHAT_FLOW=support
+  --variable HUBSPOT_HUBLET=eu1 \
+  --variable HUBSPOT_DEFAULT_CHAT_FLOW=default
 ```
 
 ## Configuration
 
 ### Required Variables
 
-| Variable | Description |
-|----------|-------------|
-| `HUBSPOT_PORTAL_ID` | Your HubSpot Portal ID |
-| `HUBSPOT_HUB_ID` | Your HubSpot Hub ID (usually same as Portal ID) |
-| `HUBSPOT_DEFAULT_CHAT_FLOW` | Default chat flow name (optional, defaults to "support") |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `HUBSPOT_PORTAL_ID` | Your HubSpot Portal ID | (required) |
+| `HUBSPOT_HUBLET` | Your HubSpot data center region (`eu1`, `na1`, etc.) | `eu1` |
+| `HUBSPOT_DEFAULT_CHAT_FLOW` | Default chat flow name | `default` |
 
-### iOS Additional Setup
+### Finding Your HubSpot Configuration
 
-After installing the plugin, you need to manually add the HubSpot SDK via Swift Package Manager in Xcode:
+1. **Portal ID**: Found in HubSpot Settings > Account Management > Account Defaults
+2. **Hublet**: Check your HubSpot URL:
+   - `app.hubspot.com` → `na1`
+   - `app-eu1.hubspot.com` → `eu1`
+3. **Chat Flow**: Create a mobile-enabled chatflow in HubSpot > Conversations > Chatflows
 
-1. Open your iOS project in Xcode (`platforms/ios/YourApp.xcworkspace`)
-2. Go to **File > Add Package Dependencies...**
-3. Enter the URL: `https://github.com/HubSpot/mobile-chat-sdk-ios`
-4. Select version `1.0.0` or later
-5. Add to your main target
+### iOS Setup
 
-The plugin hook attempts to add this automatically, but manual verification is recommended.
+The plugin automatically:
+- Creates `Hubspot-Info.plist` with your configuration
+- Adds HubSpot SDK via Swift Package Manager
+- Configures the Xcode project
 
-### Android Additional Setup
+**Requirements:**
+- iOS 15.0+ (set in your `config.xml`)
+- Xcode 14+
+
+Add to your `config.xml`:
+```xml
+<preference name="deployment-target" value="15.0" />
+```
+
+### Android Setup
 
 The plugin automatically creates `hubspot-info.json` in your Android assets folder.
+
+**Requirements:**
+- Android API 24+
 
 ## Usage
 
 ### Show Chat
 
 ```javascript
+// Open with default chat flow
 HubspotChat.show(
   function() { console.log('Chat opened'); },
   function(error) { console.error('Error:', error); }
 );
 
-// With specific chat flow
+// Open with specific chat flow
 HubspotChat.show('sales',
   function() { console.log('Chat opened'); },
   function(error) { console.error('Error:', error); }
@@ -76,8 +92,17 @@ HubspotChat.hide(
 
 ### Set User Identity
 
+Use this with HubSpot's Visitor Identification API for authenticated users:
+
 ```javascript
-HubspotChat.setUserIdentity('user@example.com', 'optional-identity-token',
+// With identity token (recommended for authenticated users)
+HubspotChat.setUserIdentity('user@example.com', 'jwt-identity-token',
+  function() { console.log('Identity set'); },
+  function(error) { console.error('Error:', error); }
+);
+
+// Email only (anonymous identification)
+HubspotChat.setUserIdentity('user@example.com',
   function() { console.log('Identity set'); },
   function(error) { console.error('Error:', error); }
 );
@@ -104,14 +129,43 @@ HubspotChat.logout(
 );
 ```
 
+## HubSpot Dashboard Setup
+
+For the chat to work, you must configure a chatflow in HubSpot:
+
+1. Go to **HubSpot > Conversations > Chatflows**
+2. Create or edit a chatflow
+3. In **Target** settings, enable **"Mobile SDK"**
+4. **Publish** the chatflow
+5. Use the chatflow's internal name as `HUBSPOT_DEFAULT_CHAT_FLOW`
+
+## Troubleshooting
+
+### "The system isn't responding" error
+
+This usually means:
+- Chatflow not published or not enabled for Mobile SDK
+- Wrong `HUBSPOT_HUBLET` value
+- Wrong `HUBSPOT_DEFAULT_CHAT_FLOW` name
+
+### iOS build errors
+
+1. Ensure iOS deployment target is 15.0+
+2. Clean build folder in Xcode
+3. Delete `platforms/ios` and re-add: `cordova platform add ios`
+
+### SDK not configured error
+
+Check that `Hubspot-Info.plist` exists in your iOS app bundle with correct values.
+
 ## Platform Support
 
-- iOS 13.0+
+- iOS 15.0+
 - Android API 24+
 
 ## Dependencies
 
-- **iOS**: HubSpot Mobile SDK via Swift Package Manager (`https://github.com/HubSpot/mobile-chat-sdk-ios`)
+- **iOS**: HubSpot Mobile SDK via Swift Package Manager
 - **Android**: `com.hubspot.mobilechatsdk:mobile-chat-sdk-android:1.0.+`
 
 ## License
