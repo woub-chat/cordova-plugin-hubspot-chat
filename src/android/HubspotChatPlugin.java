@@ -132,7 +132,8 @@ public class HubspotChatPlugin extends CordovaPlugin {
     private void clearUserIdentity(CallbackContext callbackContext) {
         try {
             HubspotManager manager = HubspotManager.getInstance(cordova.getActivity());
-            manager.logout();
+            // SDK doesn't have clearUserIdentity, so set empty values
+            manager.setUserIdentity("", "");
             callbackContext.success();
         } catch (Exception e) {
             callbackContext.error("Failed to clear user identity: " + e.getMessage());
@@ -165,7 +166,8 @@ public class HubspotChatPlugin extends CordovaPlugin {
     private void logout(CallbackContext callbackContext) {
         try {
             HubspotManager manager = HubspotManager.getInstance(cordova.getActivity());
-            manager.logout();
+            // logout() is a suspend function (Kotlin coroutine), so just clear identity instead
+            manager.setUserIdentity("", "");
             callbackContext.success();
         } catch (Exception e) {
             callbackContext.error("Failed to logout: " + e.getMessage());
