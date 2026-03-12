@@ -91,11 +91,6 @@ function getPluginVariables(context, projectRoot) {
 
 function createHubSpotInfoPlist(platformPath, projectName, variables) {
   const plistPath = path.join(platformPath, projectName, "Hubspot-Info.plist");
-  
-  if (fs.existsSync(plistPath)) {
-    console.log("[HubspotChat] Hubspot-Info.plist already exists");
-    return;
-  }
 
   if (!variables.portalId || !variables.hublet) {
     console.log("[HubspotChat] Warning: HUBSPOT_PORTAL_ID or HUBSPOT_HUBLET not set");
@@ -117,8 +112,12 @@ function createHubSpotInfoPlist(platformPath, projectName, variables) {
 </dict>
 </plist>`;
 
+  const exists = fs.existsSync(plistPath);
   fs.writeFileSync(plistPath, plistContent);
-  console.log("[HubspotChat] Created Hubspot-Info.plist");
+  console.log(`[HubspotChat] ${exists ? "Updated" : "Created"} Hubspot-Info.plist`);
+  console.log(`[HubspotChat]   portalId: ${variables.portalId}`);
+  console.log(`[HubspotChat]   hublet: ${variables.hublet}`);
+  console.log(`[HubspotChat]   defaultChatFlow: ${variables.defaultChatFlow}`);
 }
 
 function addToXcodeProject(platformPath, projectName, variables) {
