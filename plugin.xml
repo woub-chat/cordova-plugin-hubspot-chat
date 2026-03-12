@@ -41,12 +41,21 @@
             </feature>
         </config-file>
 
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-sdk tools:overrideLibrary="com.hubspot.mobilesdk" />
+        </config-file>
+
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity
                 android:name="com.hubspot.mobilesdk.HubspotWebActivity"
                 android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-                android:exported="false" />
+                android:exported="false"
+                tools:replace="android:theme" />
         </config-file>
+
+        <edit-config file="AndroidManifest.xml" target="/manifest" mode="merge">
+            <manifest xmlns:tools="http://schemas.android.com/tools" />
+        </edit-config>
 
         <source-file src="src/android/HubspotChatPlugin.java" target-dir="src/com/woub/plugins/hubspot" />
 
