@@ -7,7 +7,7 @@ Cordova plugin for HubSpot Mobile Chat SDK (iOS & Android).
 From GitHub:
 
 ```bash
-cordova plugin add https://github.com/romanlazurenko/cordova-plugin-hubspot-chat.git \
+cordova plugin add https://github.com/woub-chat/cordova-plugin-hubspot-chat.git \
   --variable HUBSPOT_PORTAL_ID=YOUR_PORTAL_ID \
   --variable HUBSPOT_HUBLET=eu1 \
   --variable HUBSPOT_DEFAULT_CHAT_FLOW=default
